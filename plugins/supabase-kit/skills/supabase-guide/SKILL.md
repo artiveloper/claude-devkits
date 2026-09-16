@@ -21,74 +21,20 @@ description: >
 
 ## 1. 클라이언트 설정
 
-설치: `@supabase/supabase-js` + `@supabase/ssr` (프로젝트가 쓰는 패키지 매니저로).
+세 가지 클라이언트를 구분해 쓴다. **섞으면 RLS가 뚫리거나 세션이 샌다.**
 
-### Browser Client (Client Component용)
+| 클라이언트 | 쓰는 곳 | 패키지 | 키 |
+|-----------|--------|--------|-----|
+| Browser | Client Component | `@supabase/ssr`의 `createBrowserClient` | Publishable |
+| Server | Server Component / Server Action / Route Handler | `@supabase/ssr`의 `createServerClient` | Publishable |
+| Admin (RLS 우회) | 서버 전용 관리 작업 | **`@supabase/supabase-js`의 `createClient`** | Secret |
 
-```ts
-// src/lib/supabase/client.ts
-import { createBrowserClient } from '@supabase/ssr'
-import type { Database } from '@/types/database'
+- Admin 클라이언트만 `@supabase/ssr`이 아니다 — 세션·쿠키와 무관하게 동작해야 하므로 `autoRefreshToken`·`persistSession`을 끈다.
+- `createBrowserClient`는 싱글턴이라 반복 호출해도 안전하지만, **서버 클라이언트는 요청마다 새로 생성**한다
+  (모듈 스코프 캐싱 금지 — 다른 사용자의 세션이 섞인다).
+- Server Component에서는 쿠키를 쓸 수 없어 `setAll`이 실패한다 — try/catch로 삼키고, 갱신은 2절에 맡긴다.
 
-export function createClient() {
-  return createBrowserClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-  )
-}
-```
-
-### Server Client (Server Component / Server Action / Route Handler용)
-
-```ts
-// src/lib/supabase/server.ts
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
-import type { Database } from '@/types/database'
-
-export async function createSupabaseServerClient() {
-  const cookieStore = await cookies()
-  return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-    {
-      cookies: {
-        getAll() { return cookieStore.getAll() },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          } catch {
-            // Server Component에서는 쿠키 set 불가 — 무시
-          }
-        },
-      },
-    }
-  )
-}
-```
-
-`createBrowserClient`는 싱글턴이라 반복 호출해도 안전하지만, 서버 클라이언트는 **요청마다 새로 생성**한다
-(모듈 스코프 캐싱 금지 — 다른 사용자의 세션이 섞인다).
-
-### Admin Client (서버 전용 — RLS 우회)
-
-```ts
-// src/lib/supabase/admin.ts
-import { createClient } from '@supabase/supabase-js'  // ← @supabase/ssr 아님
-import type { Database } from '@/types/database'
-
-export function createSupabaseAdminClient() {
-  return createClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SECRET_KEY!,
-    {
-      auth: { autoRefreshToken: false, persistSession: false },
-    }
-  )
-}
-```
+세 파일의 전체 코드(`client.ts`·`server.ts`·`admin.ts`)와 `proxy.ts` → `references/client-setup.md`.
 
 ---
 
@@ -151,40 +97,15 @@ export async function requireAdmin() {
 
 `@supabase/ssr`은 세션을 쿠키에 담는다. **쿠키를 쓸 수 있는 계층에서만 토큰을 갱신할 수 있는데,
 SSR 렌더 계층은 쿠키를 쓸 수 없다**(`server.ts`의 try/catch가 그 이유) — 그래서 갱신은 렌더 이전
-계층의 책임이다. 누락하면 세션이 조용히 만료된다. 프레임워크 불문 원칙이고,
-아래는 Next.js 구현 예시다(Next.js 15 이하는 `middleware.ts` / `middleware`).
+계층의 책임이다. 누락하면 세션이 조용히 만료된다. 프레임워크 불문 원칙이다.
 
-```ts
-// src/proxy.ts
-import { createServerClient } from '@supabase/ssr'
-import { NextResponse, type NextRequest } from 'next/server'
+구현에서 틀리기 쉬운 세 가지 — 하나라도 빠지면 갱신이 조용히 실패한다.
 
-export async function proxy(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({ request })
+1. `setAll`에서 **요청과 응답 양쪽에** 쿠키를 쓴다. 한쪽만 쓰면 갱신된 토큰이 유실된다.
+2. **`getClaims()`를 반드시 호출**한다 — 이 호출이 갱신 트리거다.
+3. 쿠키를 실어 만든 **그 응답 객체를 반환**한다. `NextResponse.next()`를 새로 만들어 반환하면 새 쿠키가 사라진다.
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-    {
-      cookies: {
-        getAll() { return request.cookies.getAll() },
-        setAll(cookiesToSet) {
-          // 요청·응답 양쪽에 써야 한다 — 한쪽만 쓰면 갱신 토큰이 유실된다
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-          supabaseResponse = NextResponse.next({ request })
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          )
-        },
-      },
-    }
-  )
-
-  await supabase.auth.getClaims()   // 반드시 호출 — 토큰 갱신 트리거
-
-  return supabaseResponse   // 반드시 이 응답을 반환 — 새 쿠키가 실려 있다
-}
-```
+Next.js 구현 전체 코드(`proxy.ts`, 15 이하는 `middleware.ts`) → `references/client-setup.md`.
 
 **여기서 인가를 끝내지 않는다.** 앞단 보호는 경로 매칭에 의존해 조용히 빠질 수 있다.
 인가는 항상 Server Action·Route Handler 안에서 다시 확인하고, 최종 방어선은 RLS다.

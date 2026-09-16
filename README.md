@@ -90,7 +90,7 @@ plugins/
 
 각 킷에는 추가로 두 가지가 있습니다:
 - `evals/` — 스킬 **발동/비발동 회귀 테스트** (`claude plugin eval` 형식, early access). 케이스마다 실제 사용자 프롬프트와 grader가 있다.
-- 긴 기술 스킬의 `references/` — 조건부 상세(마이그레이션 절차 등)를 분리해, 트리거 후 로드 비용을 줄인다. 예: `supabase-guide/references/key-migration.md`, `supabase-guide/references/rls-testing.md`, `nextjs-guide/references/nextjs-16-baseline.md`, `shadcn-ui/references/radix-migration.md`
+- 긴 기술 스킬의 `references/` — 조건부 상세(마이그레이션 절차 등)를 분리해, 트리거 후 로드 비용을 줄인다. 예: `supabase-guide/references/client-setup.md`, `supabase-guide/references/rls-testing.md`, `nextjs-guide/references/nextjs-16-baseline.md`, `shadcn-ui/references/radix-migration.md`
 
 ### 상시 토큰 비용
 
