@@ -54,7 +54,7 @@
       "name": "supabase-kit",
       "source": "./plugins/supabase-kit",
       "displayName": "Supabase Kit — 인증·RLS·키 관리",
-      "description": "@supabase/ssr 클라이언트, getUser vs getSession, RLS 정책·성능, publishable/secret 신규 API 키, 타입 생성, 마이그레이션. 인증 예시는 Next.js App Router 기준.",
+      "description": "@supabase/ssr 클라이언트, getClaims/getUser/getSession 선택, grant + RLS 2층 권한 모델·정책 성능, pgTAP RLS 테스트, publishable/secret 신규 API 키, 타입 생성, 마이그레이션·선언적 스키마. 인증 예시는 Next.js App Router 기준.",
       "category": "backend",
       "tags": ["supabase", "rls", "auth", "postgres", "nextjs"]
     },

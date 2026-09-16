@@ -56,4 +56,5 @@
 |------|----------|------|------|
 | 2026-09-10 | 초기 구성 (kit-editor·kit-auditor + kit-improve·kit-authoring·kit-audit) | 전체 | - |
 | 2026-09-11 | 커맨드 아티팩트 규칙 추가 + project-docs-kit(/init-project-docs) 신설 | project-docs-kit | 프로젝트 초기 문서 스타터를 슬래시 명령어로 설치 |
+| 2026-09-16 | supabase-guide 개정 (getClaims 권장, grant+RLS 2층 모델, pgTAP 테스트, 선언적 스키마) + references 3종 | supabase-kit | Supabase 공식 문서·agent-skills 베스트 프랙티스 반영 |
 

@@ -90,7 +90,7 @@ plugins/
 
 각 킷에는 추가로 두 가지가 있습니다:
 - `evals/` — 스킬 **발동/비발동 회귀 테스트** (`claude plugin eval` 형식, early access). 케이스마다 실제 사용자 프롬프트와 grader가 있다.
-- 긴 기술 스킬의 `references/` — 조건부 상세(마이그레이션 절차 등)를 분리해, 트리거 후 로드 비용을 줄인다. 예: `supabase-guide/references/key-migration.md`, `shadcn-ui/references/radix-migration.md`
+- 긴 기술 스킬의 `references/` — 조건부 상세(마이그레이션 절차 등)를 분리해, 트리거 후 로드 비용을 줄인다. 예: `supabase-guide/references/key-migration.md`, `supabase-guide/references/rls-testing.md`, `shadcn-ui/references/radix-migration.md`
 
 ### 상시 토큰 비용
 
@@ -143,7 +143,7 @@ plugins/
 | 스킬 | 킷 | 범위 |
 |------|----|------|
 | `python-guide` | `python-kit` | 범용 Python 클린코드 — src layout, 타입 힌트(mypy/pyright), uv/poetry·pyproject.toml, ruff, pytest, 예외 계층, asyncio |
-| `supabase-guide` | `supabase-kit` | Supabase SSR 인증(`@supabase/ssr`), RLS·성능, 타입 생성, 신규 publishable/secret 키 마이그레이션. 인증·미들웨어 예시는 Next.js App Router 기준 |
+| `supabase-guide` | `supabase-kit` | Supabase SSR 인증(`@supabase/ssr`, getClaims/getUser), grant + RLS 2층 권한 모델·정책 성능, pgTAP RLS 테스트, 타입 생성, 마이그레이션·선언적 스키마, 신규 publishable/secret 키. 인증·토큰 갱신 예시는 Next.js App Router 기준 |
 | `nextjs-guide` | `nextjs-kit` | App Router 메커니즘 — 파일 컨벤션, Server/Client Component 경계, route group, `loading.tsx`+Suspense 스트리밍 |
 | `react-query-guide` | `nextjs-kit` | 데이터 레이어 — query keys/options/prefetch, mutation·invalidate·낙관적 업데이트, Server Actions, 실시간 구독, 상태 소유권. 백엔드 무관(데이터 접근 모듈은 자리표시자) |
 | `shadcn-ui` | `nextjs-kit` | Tailwind/shadcn UI 구현 패턴. 프리미티브는 **Base UI(`@base-ui/react`)** 기준 — 합성(render prop), `data-*` 상태 스타일링, Sidebar 레이아웃 |
