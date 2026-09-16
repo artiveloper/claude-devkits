@@ -102,7 +102,7 @@ plugins/
 | `backend-kit` | 원칙 | ~690 tok | 에이전트 3 + 스킬 3 |
 | `frontend-kit` | 원칙 | ~655 tok | 에이전트 3 + 스킬 3 |
 | `python-kit` | 기술 | ~240 tok | 스킬 1 |
-| `nextjs-kit` | 기술 | ~760 tok | 스킬 3 |
+| `nextjs-kit` | 기술 | ~800 tok | 스킬 3 |
 | `supabase-kit` | 기술 | ~275 tok | 스킬 1 |
 | `project-docs-kit` | 도구 | ~0 tok | 명령어 1 (슬래시 호출 시에만 로드) |
 
@@ -146,7 +146,7 @@ plugins/
 | `supabase-guide` | `supabase-kit` | Supabase SSR 인증(`@supabase/ssr`, getClaims/getUser), grant + RLS 2층 권한 모델·정책 성능, pgTAP RLS 테스트, 타입 생성, 마이그레이션·선언적 스키마, 신규 publishable/secret 키. 인증·토큰 갱신 예시는 Next.js App Router 기준 |
 | `nextjs-guide` | `nextjs-kit` | App Router 메커니즘 — 파일 컨벤션, Server/Client 경계와 합성, `loading.tsx`+Suspense 스트리밍, 서버 데이터 보안(DAL/DTO·Server Action 재인가), 캐시·에러 처리, `proxy.ts`와 matcher. **Next.js 16 기준** |
 | `react-query-guide` | `nextjs-kit` | 데이터 레이어 — query keys/options/prefetch, mutation·invalidate·낙관적 업데이트, Server Actions, 실시간 구독, 상태 소유권. 백엔드 무관(데이터 접근 모듈은 자리표시자) |
-| `shadcn-ui` | `nextjs-kit` | Tailwind/shadcn UI 구현 패턴. 프리미티브는 **Base UI(`@base-ui/react`)** 기준 — 합성(render prop), `data-*` 상태 스타일링, Sidebar 레이아웃 |
+| `shadcn-ui` | `nextjs-kit` | Tailwind/shadcn UI 구현 패턴. 프리미티브는 **Base UI(`@base-ui/react`)** 기준 — 합성(render prop), `data-*` 상태 스타일링, 디자인 토큰(CSS 변수)·`data-slot` 덮어쓰기, Sidebar 레이아웃, shadcn CLI 툴링 |
 
 > 기술 스킬도 **특정 프로젝트에 종속되지 않는다.** 코드 예시는 중립적인 경로(`src/...`, `@/components/ui/*`)와 예시 도메인(`resources`, `catalog_items` 등)을 쓰므로, 프로젝트에 적용할 때 자기 경로·테이블명으로 바꿔 읽으면 된다.
 

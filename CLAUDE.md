@@ -59,4 +59,5 @@
 | 2026-09-16 | supabase-guide 개정 (getClaims 권장, grant+RLS 2층 모델, pgTAP 테스트, 선언적 스키마) + references 3종 | supabase-kit | Supabase 공식 문서·agent-skills 베스트 프랙티스 반영 |
 | 2026-09-16 | nextjs-guide 개정 (proxy.ts 절, 서버 데이터 보안, 에러 처리, 캐시 모델, Next.js 16 기준선) + references 2종 | nextjs-kit | Next.js 공식 문서(v16) 베스트 프랙티스 반영 |
 | 2026-09-16 | supabase-guide 설정 보일러플레이트를 references/client-setup.md로 분리 | supabase-kit | 본문 478줄 → 398줄, 길이 WARN 해소 및 Gotcha 적재 여유 확보 |
+| 2026-09-16 | shadcn-ui 개정 (Base UI 기본 확정, 링크는 buttonVariants, 디자인 토큰·data-slot 절, 툴링 절, Sidebar 보강) + references/shadcn-setup.md 신설·radix-migration.md 갱신 | nextjs-kit | shadcn/ui·Base UI 공식 문서 베스트 프랙티스 반영 |
 

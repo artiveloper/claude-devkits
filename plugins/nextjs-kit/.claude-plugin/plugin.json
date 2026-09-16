@@ -1,6 +1,6 @@
 {
   "name": "nextjs-kit",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "displayName": "Next.js Kit — App Router·React Query·shadcn/Base UI",
   "description": "Next.js/React 스택 기술 가이드 3종. App Router 메커니즘(Server/Client 경계·합성, loading.tsx 스트리밍, 서버 데이터 보안, 에러 처리, proxy.ts, Next.js 16 기준선), React Query 데이터 레이어(query options/prefetch/mutation/낙관적 업데이트), Tailwind/shadcn UI 구현(Base UI 프리미티브). frontend-kit(원칙)과 함께 설치 권장.",
   "author": { "name": "artiveloper", "email": "artiveloper@gmail.com" },
