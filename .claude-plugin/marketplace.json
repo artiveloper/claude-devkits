@@ -46,7 +46,7 @@
       "name": "nextjs-kit",
       "source": "./plugins/nextjs-kit",
       "displayName": "Next.js Kit — App Router·React Query·shadcn/Base UI",
-      "description": "Next.js/React 스택 기술 가이드 3종 — App Router 메커니즘, React Query 데이터 레이어, Tailwind/shadcn UI 구현(Base UI). frontend-kit(원칙)과 함께 설치 권장.",
+      "description": "Next.js/React 스택 기술 가이드 3종 — App Router 메커니즘(Server/Client 경계, 서버 데이터 보안, Next.js 16 기준선), React Query 데이터 레이어, Tailwind/shadcn UI 구현(Base UI). frontend-kit(원칙)과 함께 설치 권장.",
       "category": "frontend",
       "tags": ["nextjs", "react", "react-query", "shadcn", "tailwind", "base-ui"]
     },
