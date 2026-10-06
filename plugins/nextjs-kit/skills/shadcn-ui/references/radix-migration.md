@@ -14,7 +14,7 @@
 | 위치 prop | `Content`의 `side`/`align` | `Positioner`의 `side`/`align`/`sideOffset` |
 | 열림 상태 | `data-state="open"` | `data-open` / `data-closed` |
 | 애니메이션 | `data-[state=open]:animate-in` | `transition` + `data-starting-style` / `data-ending-style` |
-| 그룹 헤딩 라벨 | 팝업 내 자유 배치 | 헤딩을 둘 때는 `Group` 내부에 중첩 |
+| 그룹 래핑 | 선택 — 항목을 `Group` 없이 나열 가능 | `Content` 내부는 항상 `Group`으로 감싼다 (`GroupLabel` 헤딩만 선택) |
 | 위치 계산 커스텀 | Radix 내부 로직 | Floating UI(`@floating-ui/react`) 직접 사용 |
 
 이 표는 **`@base-ui/react`를 직접 쓰는 코드**에 적용된다. shadcn이 생성한 `@/components/ui/*` 래퍼는

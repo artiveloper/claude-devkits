@@ -204,7 +204,7 @@ const statusItems = [
 
 - `items`를 `Select`에 넘기면 `SelectValue`가 값→라벨 매핑을 대신한다. 안 넘기면 선택된 raw value가 그대로 렌더된다.
 - 미선택 상태는 위처럼 `value: null` 항목으로 표현한다 — 그 라벨이 플레이스홀더로 뜨고 팝업에서 선택 해제도 된다. (`<SelectValue placeholder="…" />`도 동작하지만 선택 해제는 따로 처리해야 한다.)
-- **팝업에 섹션 헤딩을 두는 순간 `SelectGroup` 래핑이 필수**다 — `SelectLabel`은 부모 그룹과 자동으로 연관되므로 그룹 밖에 두면 연관이 생기지 않는다. 헤딩이 필요 없으면 `SelectContent` 아래 `SelectItem`만 나열해도 된다. Menu도 같다.
+- **`Select`를 쓸 때 `SelectContent` 내부는 항상 `SelectGroup`으로 감싼다** — 섹션 헤딩 유무와 무관하게 적용한다(일관성·접근성·공식 패턴 일치). `SelectLabel`(헤딩)만 선택 사항이며, 쓸 때는 반드시 그 `SelectGroup` **안에** 둬야 부모 그룹과 연관된다(그룹 밖에 두면 연관이 생기지 않는다). Menu도 같다.
 - 이름 혼동 주의: Base UI에는 **트리거**와 연관되는 폼 라벨 `Select.Label`과 팝업 내 그룹 헤딩 `Select.GroupLabel`이 따로 있다. shadcn이 export하는 `SelectLabel`은 후자다.
 
 ### 상태 스타일링 — `data-*` 속성
