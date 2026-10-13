@@ -61,4 +61,5 @@
 | 2026-09-16 | supabase-guide 설정 보일러플레이트를 references/client-setup.md로 분리 | supabase-kit | 본문 478줄 → 398줄, 길이 WARN 해소 및 Gotcha 적재 여유 확보 |
 | 2026-09-16 | shadcn-ui 개정 (Base UI 기본 확정, 링크는 buttonVariants, 디자인 토큰·data-slot 절, 툴링 절, Sidebar 보강) + references/shadcn-setup.md 신설·radix-migration.md 갱신 | nextjs-kit | shadcn/ui·Base UI 공식 문서 베스트 프랙티스 반영 |
 | 2026-10-07 | shadcn-ui §1 Select 규칙 교정 ("헤딩 없으면 그룹 생략 가능" → "SelectContent 내부는 항상 SelectGroup으로 감싼다, SelectLabel만 선택") + radix-migration.md 대응표 정렬 v0.5.1 | nextjs-kit | shadcn/ui 공식 Select 예시(라벨 없이도 SelectGroup 래핑) 반영 |
+| 2026-10-13 | drizzle-guide·auth-guide 신설 + react-query-guide QueryProvider 스니펫·Gotcha 추가 + nextjs-guide ESLint Gotcha 추가 v0.6.0 | nextjs-kit | bear2u/my-skills setup-guide 비교 분석 후 누락 패턴 보완 |
 

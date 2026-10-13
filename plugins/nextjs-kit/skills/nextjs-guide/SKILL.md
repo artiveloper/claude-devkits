@@ -274,5 +274,6 @@ matcher에서 그 경로가 빠지거나 Server Action을 다른 라우트로 �
 - `loading.tsx`는 세그먼트의 `page`만 감싼다 — layout은 유지된 채 콘텐츠 영역만 로딩 UI로 바뀐다. 전체 화면 로딩을 기대하면 어긋난다.
 - **layout이 런타임/비캐시 데이터에 접근하면 같은 세그먼트의 `loading.tsx`로 폴백하지 않는다** — 레이아웃 렌더가 끝날 때까지 내비게이션 자체가 막힌다. 그 접근을 별도 `<Suspense>`로 감싸거나 `page.tsx`로 내린다.
 - proxy의 matcher에서 `_next/data`를 제외해도 **여전히 호출된다** — 페이지만 보호하고 데이터 라우트를 빠뜨리는 사고를 막으려는 의도된 동작이다.
+- `next lint`는 Next.js 16에서 제거됐다 — ESLint를 직접 실행(`npx eslint .`)하거나 `package.json` scripts에 `"lint": "eslint ."` 추가. 최소 설정은 `.eslintrc.json`에 `{ "extends": "next/core-web-vitals" }`. TypeScript 검사를 강화하려면 `"next/typescript"` 추가. Biome으로 대체해도 된다.
 
 > 운영 중 새로 발견한 함정은 이 섹션에 계속 축적한다.

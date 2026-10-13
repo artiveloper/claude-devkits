@@ -261,6 +261,67 @@ export async function createItemAction(input: CreateItemInput) {
 
 ---
 
+## 5-2. 검증 스키마 공유 (클라이언트 폼 ↔ Server Action)
+
+검증 스키마는 `validations/{feature}.validations.ts`에 두고, **클라이언트 폼과 Server Action이 동일 스키마를 import해 쓴다.** 같은 규칙이 양쪽에 각각 작성되는 것을 막는다 (`frontend-architecture`의 "폼 검증 이중화" 원칙 구현).
+
+```ts
+// domain/{feature}/validations/{feature}.validations.ts
+import { z } from 'zod'
+
+export const createItemSchema = z.object({
+  title: z.string().min(1, '제목을 입력하세요'),
+  description: z.string().optional(),
+})
+
+export type CreateItemInput = z.infer<typeof createItemSchema>
+```
+
+**클라이언트 폼** — `zodResolver`로 연결:
+
+```tsx
+'use client'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { createItemSchema, type CreateItemInput } from '@/domain/items'
+import { useCreateItem } from '@/domain/items'
+
+export function ItemForm() {
+  const { mutate, isPending } = useCreateItem()
+  const form = useForm<CreateItemInput>({
+    resolver: zodResolver(createItemSchema),
+    defaultValues: { title: '', description: '' },
+  })
+
+  return (
+    <form onSubmit={form.handleSubmit((data) => mutate(data))}>
+      {/* 폼 필드 — UI 구현은 shadcn-ui 스킬 참조 */}
+    </form>
+  )
+}
+```
+
+**Server Action** — 서버에서 재검증:
+
+```ts
+// {feature}.actions.ts
+'use server'
+import { createItemSchema } from '@/domain/items'
+
+export async function createItemAction(input: unknown): Promise<ActionResult<Item>> {
+  const parsed = createItemSchema.safeParse(input)
+  if (!parsed.success) return { success: false, error: parsed.error.issues[0].message }
+  // ... 비즈니스 로직
+}
+```
+
+규칙:
+- 스키마는 `domain/{feature}/` 안에 둔다 — 여러 feature가 실제로 공유하는 것만 `lib/`에 올린다.
+- 클라이언트 검증은 즉각 피드백(UX)용이고 신뢰 경계가 아니다 — **서버 재검증이 최종 관문**이다.
+- Server Action에 넘어온 `input`은 타입 단언 없이 `unknown`으로 받고 `safeParse`로 검증한다.
+
+---
+
 ## 6. 실시간 구독 → React Query 캐시
 
 실시간 채널(WebSocket, SSE, BaaS의 realtime 등)을 쓴다면 **별도 상태 저장소를 만들지 말고 React Query 캐시에 흡수**시킨다. 그래야 UI의 단일 출처가 유지된다.
@@ -326,6 +387,29 @@ export function useResourceRealtime(resourceId: string) {
 
 0. 적용 범위 판단(1-1절) — 이 feature에 어떤 하위 폴더가 실제로 필요한지 먼저 결정
 1. `lib/react-query/` — `getQueryClient`, `runPrefetch`, `QueryProvider` (최초 1회)
+
+   ```tsx
+   // lib/react-query/query-provider.tsx
+   'use client'
+   import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+   import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+   import { useState } from 'react'
+
+   export function QueryProvider({ children }: { children: React.ReactNode }) {
+     const [queryClient] = useState(
+       () => new QueryClient({
+         defaultOptions: { queries: { staleTime: 60_000 } },
+       })
+     )
+     return (
+       <QueryClientProvider client={queryClient}>
+         {children}
+         <ReactQueryDevtools initialIsOpen={false} />
+       </QueryClientProvider>
+     )
+   }
+   ```
+
 2. `domain/{feature}/queries/` — keys → options → prefetch
 3. `domain/{feature}/actions/` — Server Actions (ActionResult 패턴)
 4. `domain/{feature}/hooks/` — `useQuery` / `useMutation` 래퍼
@@ -351,5 +435,6 @@ export function useResourceRealtime(resourceId: string) {
 - `invalidateQueries`는 기본이 **prefix 매칭**이다 — `queryKeys.all`을 무효화하면 list/detail 전부 무효화된다. 의도한 범위인지 확인한다.
 - Server Action은 병렬로 호출해도 **순차 실행**된다 — 다건 조회를 Server Action `queryFn`으로 병렬 요청하면 워터폴이 된다. 조회가 많으면 Route Handler 경로를 검토한다.
 - `mutateAsync`를 쓰면서 `onError` 콜백에만 의존하면 unhandled rejection이 난다 — `mutateAsync`는 호출부에서 try/catch 한다.
+- `QueryClient`를 컴포넌트 바깥(`const queryClient = new QueryClient()`)이나 `useState(() => ...)` 없이 만들면 렌더마다 인스턴스가 재생성된다 — devtools 연결이 끊기거나 캐시가 초기화된다. 반드시 `useState(() => new QueryClient(...))` 형태를 쓴다.
 
 > 운영 중 새로 발견한 함정은 이 섹션에 계속 축적한다.
