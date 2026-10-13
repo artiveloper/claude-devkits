@@ -21,7 +21,7 @@ issues = []  # (level, path, msg)
 def add(level, path, msg): issues.append((level, str(path), msg))
 
 def frontmatter(p):
-    parts = p.read_text().split("---")
+    parts = p.read_text(encoding="utf-8").split("---")
     if len(parts) < 3: return None
     try:
         return yaml.safe_load(parts[1])
@@ -40,7 +40,7 @@ for p in skills + agents:
     fm = frontmatter(p)
     if fm is None: continue
     desc = str(fm.get("description", "") or "")
-    body_fm = p.read_text().split("---")[1]
+    body_fm = p.read_text(encoding="utf-8").split("---")[1]
     # description 존재·길이
     if not desc.strip(): add("FAIL", p, "description 비어 있음")
     if len(desc) > 1024: add("FAIL", p, f"description {len(desc)}자 — 1,024자 초과")
@@ -53,7 +53,7 @@ for p in skills + agents:
         add("WARN", p, "description에 '다루지 않는 것' 경계가 없음")
 
 for p in skills:
-    text = p.read_text()
+    text = p.read_text(encoding="utf-8")
     lines = text.count("\n") + 1
     if lines >= 500: add("FAIL", p, f"본문 {lines}줄 — 500줄 초과, references/ 분리 필요")
     elif lines >= 400: add("WARN", p, f"본문 {lines}줄 — 500줄 근접, 분리 검토")
@@ -65,8 +65,8 @@ for p in skills:
         add("FAIL", p, f"타 킷 스킬 참조 {sorted(xrefs)} 존재하나 미설치 가드 문구 없음")
     # references/ 1단계 + 100줄 목차
     for ref in (p.parent / "references").glob("*.md"):
-        rl = ref.read_text().count("\n") + 1
-        if rl > 100 and "목차" not in ref.read_text()[:800] and "## " not in ref.read_text()[:400]:
+        rl = ref.read_text(encoding="utf-8").count("\n") + 1
+        if rl > 100 and "목차" not in ref.read_text(encoding="utf-8")[:800] and "## " not in ref.read_text(encoding="utf-8")[:400]:
             add("WARN", ref, f"참조 파일 {rl}줄인데 상단 목차 없음")
 
 for p in agents:
@@ -78,7 +78,7 @@ for p in agents:
         elif skill_names[s] != plugin_of(p): add("FAIL", p, f"skills: '{s}'는 타 킷({skill_names[s]}) — 같은 킷만 프리로드 가능")
 
 for pj in sorted(ROOT.glob("plugins/*/.claude-plugin/plugin.json")):
-    d = json.loads(pj.read_text())
+    d = json.loads(pj.read_text(encoding="utf-8"))
     if "version" not in d: add("FAIL", pj, "version 필드 없음 — 업데이트가 전파되지 않음")
 
 # eval 커버리지
@@ -91,7 +91,7 @@ for kit_dir in sorted((ROOT / "plugins").iterdir()):
         add("WARN", kit_dir, "evals/no-trigger(비발동) 케이스 없음")
 
 # README 동기화 (에이전트명 언급 여부)
-readme = (ROOT / "README.md").read_text() if (ROOT / "README.md").exists() else ""
+readme = (ROOT / "README.md").read_text(encoding="utf-8") if (ROOT / "README.md").exists() else ""
 for p in agents:
     fm = frontmatter(p) or {}
     if fm.get("name") and f"`{fm['name']}`" not in readme:
